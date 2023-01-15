@@ -1,7 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
 body {
   color: white;
   background: #234;
   font-family: Sans-serif;
+
+  /* sticky footer */
+  height: 100%;
 }
 
 ul.locations {
@@ -17,10 +26,67 @@ ul.locations li {
   font-size: 3em;
 }
 
-ul.locations li:nth-child(even) {
+ul.locations li:nth-child(even),
+div.footer button:nth-child(odd) {
   background: #d93;
 }
 
-ul.locations li:nth-child(odd) {
+ul.locations li:nth-child(odd),
+div.footer button:nth-child(even) {
   background: #2bb;
+}
+
+div.counter {
+  background: #345;
+  min-height: 200px;
+  text-align: center;
+  transition: background 0.2s ease;
+}
+
+div.counter.full {
+  background: #e11;
+}
+
+div.counter p {
+  font-size: 2em;
+  padding-top: 20px;
+}
+
+div.counter span {
+  display: block;
+}
+
+div.counter span.value {
+  font-size: 5em;
+}
+
+div.counter span.max::before {
+  content: "Max: ";
+}
+
+div.counter span.max {
+  font-size: 1em;
+}
+
+div.footer {
+  min-height: 50px;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+}
+
+div.footer button {
+  width: 50%;
+  height: 200px;
+  display: inline-block;
+  float: left;
+  margin: 0;
+  padding: 0;
+  font-size: 4em;
+  color: white;
+  transition: background 0.2s ease;
+}
+
+div.footer button:disabled {
+  background: #555;
 }

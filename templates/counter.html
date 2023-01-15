@@ -9,13 +9,80 @@
   <body>
     <div class="counter">
       <p>{{ location }}</p>
-      <span>0</span>
-      <span class="max">0</span>
+      <span class="value">0</span>
+      <span class="max" style="display: none;">0</span>
+      <span class="checkins"></span>
     </div>
 
     <div class="footer">
-      <button>-</button>
-      <button>+</button>
+      <button disabled data-action="out">-</button>
+      <button disabled data-action="in">+</button>
     </div>
+
+    <script>
+    api = new XMLHttpRequest();
+    var loc = "{{ location }}"; // from template
+
+    function updateView(data) {
+      document.querySelectorAll("button").forEach(elm => {
+        elm.disabled = false;
+      })
+
+      if (data["total"] == 0) {
+        document.querySelector("button[data-action=out]").disabled = true;
+      }
+
+      document.querySelector("span.value").innerHTML = data["total"];
+
+      visibleMax = (data["max"] > 0);
+      document.querySelector("span.max").style.display = (visibleMax ? "block" : "none");
+      document.querySelector("span.max").innerHTML = data["max"];
+
+      if (visibleMax && parseInt(data["total"]) >= parseInt(data["max"])) {
+        document.querySelector("div.counter").style.background = "#e11";
+      } else if (visibleMax && data["total"] == 0) {
+        document.querySelector("div.counter").style.background = "#345";
+      } else if (visibleMax) {
+        vin = Math.round((data["total"] / data["max"]) * 100);
+        vout = Math.round(((data["max"] - data["total"]) / data["max"]) * 100);
+
+        // background: linear-gradient(90deg, #d93 60%, #2bb 60%);
+        txtStyle = "linear-gradient(90deg, #d93 0%, #d93 " + vin + "%, #2bb " + vin + "%, #2bb " + vout + "%)";
+        document.querySelector("div.counter").style.background = txtStyle;
+      }
+
+      // 0 / 0
+      document.querySelector("span.checkins").innerHTML = data["out"] + " / " + data["in"];
+    }
+
+    function updateCounter(action) {
+      api.open("POST", "/api/locations/" + loc + "/" + action, true);
+      api.send();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      api.open("GET", "/api/locations/" + loc, true);
+      api.send();
+
+      api.onreadystatechange = function(){
+        if (api.readyState == 4) {
+          if (api.status == 200) {
+            var data = JSON.parse(this.responseText);
+            updateView(data.data);
+          } else {
+            document.querySelector("div.counter").style.background = "red";
+          }
+        }
+      };
+
+
+      document.querySelectorAll("button").forEach(elm => {
+        elm.onclick = function() {
+          window.navigator.vibrate(60);
+          updateCounter(this.dataset.action);
+        }
+      });
+    });
+    </script>
   </body>
 </html>

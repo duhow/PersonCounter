@@ -4,10 +4,7 @@ from app import app, redis_db
 
 def get_locations() -> list:
     query = redis_db.lrange("locations", 0, -1)
-    data = list()
-    if query:
-        data = [x.decode() for x in query]
-    return data
+    return query
 
 @app.route("/api/locations", methods=["GET", "POST"])
 def api_locations():
@@ -27,7 +24,8 @@ def api_locations():
             abort(409, "Location already repeated")
 
         query = redis_db.rpush("locations", location)
-        redis_db.set(f"locations/{location}", 0)
+
+        api_locations_count(location, "reset")
 
         return jsonify(
             result=bool(query)
@@ -35,11 +33,19 @@ def api_locations():
 
     elif request.method == "GET":
         data = get_locations()
-        print(data)
+        #print(data)
 
         return jsonify(
             data=data
         )
+
+@app.route("/api/locations/<location>", methods=["GET"])
+def api_location_get(location):
+    locations = get_locations()
+    if location not in locations:
+        abort(404)
+
+    return jsonify(data=get_location_count(location))
 
 @app.route("/api/locations/clear", methods=["POST"])
 def api_locations_clear():
@@ -48,22 +54,57 @@ def api_locations_clear():
         result=bool(query)
     )
 
+@app.route("/api/locations/<location>/config", methods=["POST"])
+def api_locations_config(location):
+    locations = get_locations()
+    if location not in locations:
+        abort(404)
+
+    data = request.get_json(force=True)
+    if not data:
+        abort(400)
+
+    path = f"locations/{location}"
+
+    if 'max' in data.keys():
+        value = max(int(data["max"]), 0)
+        redis_db.hset(path, "max", value)
+    else:
+        abort(400)
+
+    return jsonify(result=True)
+
 @app.route("/api/locations/<location>/<operation>", methods=["POST"])
 def api_locations_count(location, operation):
     locations = get_locations()
     if location not in locations:
         abort(404)
 
-    if operation not in ["add", "sub", "reset"]:
+    if operation not in ["in", "add", "out", "sub", "reset"]:
         abort(400)
 
     path = f"locations/{location}"
+    columns = ["total", "in", "out", "max"]
 
     if operation == 'reset':
-        value = redis_db.set(path, 0)
-    elif operation == 'add':
-        value = redis_db.incr(path)
-    elif operation == 'sub':
-        value = redis_db.decr(path)
+        for column in columns:
+            redis_db.hset(path, column, 0)
+    elif operation in ['in', 'add']:
+        redis_db.hincrby(path, "in", 1)
+        redis_db.hincrby(path, "total", 1)
+    elif operation in ['out', 'sub']:
+        redis_db.hincrby(path, "out", 1)
+        redis_db.hincrby(path, "total", -1)
 
-    return jsonify(result=value)
+    value = get_location_count(location)
+    return jsonify(data=value)
+
+def get_location_count(location) -> dict:
+    path = f"locations/{location}"
+
+    value = redis_db.hgetall(path)
+    for key, val in value.items():
+        if isinstance(val, str) and val.isnumeric():
+            value[key] = int(val)
+    #print(value)
+    return value
