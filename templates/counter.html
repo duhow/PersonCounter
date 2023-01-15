@@ -22,6 +22,7 @@
     <script>
     api = new XMLHttpRequest();
     var loc = "{{ location }}"; // from template
+    var timeout_id = 0;
 
     function updateView(data) {
       document.querySelectorAll("button").forEach(elm => {
@@ -60,6 +61,14 @@
       api.send();
     }
 
+    function resetCounter() {
+      var ask = confirm("¿Quieres reiniciar el contador?");
+      if (!ask) { return; }
+
+      api.open("POST", "/api/locations/" + loc + "/reset", true);
+      api.send();
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       api.open("GET", "/api/locations/" + loc, true);
       api.send();
@@ -82,6 +91,20 @@
           updateCounter(this.dataset.action);
         }
       });
+
+      document.querySelector("div.counter").addEventListener("mousedown", function() {
+        timeout_id = setTimeout(resetCounter, 2000);
+      });
+      document.querySelector("div.counter").addEventListener("touchstart", function() {
+        timeout_id = setTimeout(resetCounter, 2000);
+      });
+      document.querySelector("div.counter").addEventListener("mouseup", function() {
+        clearTimeout(timeout_id);
+      });
+      document.querySelector("div.counter").addEventListener("touchend", function() {
+        clearTimeout(timeout_id);
+      });
+
     });
     </script>
   </body>
