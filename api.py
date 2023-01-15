@@ -27,7 +27,7 @@ def api_locations():
         if 'name' not in data.keys():
             abort(400)
 
-        location = data.get("name")
+        location = data.get("name").strip()
         locations = get_locations()
 
         if location in locations:
