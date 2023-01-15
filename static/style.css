@@ -102,3 +102,36 @@ div.footer button {
 div.footer button:disabled {
   background: #555;
 }
+
+
+div.add-location {
+  font-size: 3em;
+}
+
+div.add-location span {
+  background: orange;
+  color: white;
+  font-weight: bold;
+  display: table-cell;
+  float: left;
+  padding: 15px 25px;
+}
+
+div.add-location input {
+  float: left;
+  color: white;
+  background: rgba(0,0,0,0);
+  border: 2px solid white;
+  box-sizing: border-box;
+  height: 85px;
+  padding: 15px;
+  font-size: 1em;
+}
+
+div.add-location div {
+  display: flex;
+}
+
+div.add-location div > input {
+  width: 100%;
+}

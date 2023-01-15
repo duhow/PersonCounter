@@ -12,16 +12,45 @@
     <li data-location="{{ location }}"><span>{{ count }}</span>{{ location }}</li>
     {% endfor %}
     </ul>
+    <div class="footer add-location">
+      <span>+</span>
+      <div>
+        <input type="text" name="location" value="" autocomplete="off">
+      </div>
+    </div>
   </body>
 
   <script>
-    // redirect onclick
     document.addEventListener('DOMContentLoaded', function () {
+      // redirect onclick
       document.querySelectorAll("li").forEach(elm => {
         elm.onclick = function() {
           document.location.href += this.dataset.location;
         }
       });
+
+      document.querySelector("div.add-location span").onclick = function(){
+        input = document.querySelector("div.add-location input").value;
+        if (!input){ return; }
+        document.querySelector("div.add-location input").style.background = "";
+
+        data = {"name": input};
+
+        api = new XMLHttpRequest();
+        api.open("POST", "/api/locations", true);
+        api.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        api.send(JSON.stringify(data));
+
+        api.onreadystatechange = function(){
+          if (api.readyState == 4) {
+            if (api.status == 200) {
+              window.location.reload();
+            } else {
+              document.querySelector("div.add-location input").style.background = "red";
+            }
+          }
+        };
+      }
     }, false);
   </script>
 </html>
