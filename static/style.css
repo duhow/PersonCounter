@@ -18,6 +18,7 @@ ul.locations {
   padding: 0;
   display: block;
   width: 100%;
+  margin-bottom: 85px;
 }
 
 ul.locations li {
@@ -122,7 +123,7 @@ div.add-location span {
 div.add-location input {
   float: left;
   color: white;
-  background: rgba(0,0,0,0);
+  background: #234;
   border: 2px solid white;
   box-sizing: border-box;
   height: 85px;
