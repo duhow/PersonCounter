@@ -2,9 +2,19 @@ from flask import Flask, request, jsonify, abort
 
 from app import app, redis_db
 
-def get_locations() -> list:
-    query = redis_db.lrange("locations", 0, -1)
-    return query
+def get_locations(with_count=False):
+    locations = redis_db.lrange("locations", 0, -1)
+    if not with_count:
+        # as list
+        return locations
+
+    data = dict()
+    for location in locations:
+        path = f"locations/{location}"
+        value = redis_db.hget(path, "total")
+        data[location] = int(value)
+
+    return data
 
 @app.route("/api/locations", methods=["GET", "POST"])
 def api_locations():

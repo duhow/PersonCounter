@@ -15,7 +15,7 @@ import api
 
 @app.route("/")
 def web_locations():
-    locations = api.get_locations()
+    locations = api.get_locations(with_count=True)
     return render_template('locations.html', locations=locations)
 
 @app.route("/<location>")

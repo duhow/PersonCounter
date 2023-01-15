@@ -26,6 +26,14 @@ ul.locations li {
   font-size: 3em;
 }
 
+ul.locations li span {
+  min-width: 100px;
+  display: inline-block;
+  margin-right: 15px;
+  text-align: right;
+  font-weight: bold;
+}
+
 ul.locations li:nth-child(even),
 div.footer button:nth-child(odd) {
   background: #d93;

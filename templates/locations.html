@@ -8,8 +8,8 @@
   </head>
   <body>
     <ul class="locations">
-    {% for location in locations %}
-    <li>{{ location }}</li>
+    {% for location, count in locations.items() %}
+    <li data-location="{{ location }}"><span>{{ count }}</span>{{ location }}</li>
     {% endfor %}
     </ul>
   </body>
@@ -19,7 +19,7 @@
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll("li").forEach(elm => {
         elm.onclick = function() {
-          document.location.href += this.innerHTML;
+          document.location.href += this.dataset.location;
         }
       });
     }, false);
