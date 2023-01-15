@@ -85,6 +85,8 @@ div.footer button {
   font-size: 4em;
   color: white;
   transition: background 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 div.footer button:disabled {
