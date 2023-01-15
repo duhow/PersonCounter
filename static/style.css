@@ -1,0 +1,26 @@
+body {
+  color: white;
+  background: #234;
+  font-family: Sans-serif;
+}
+
+ul.locations {
+  margin: 0;
+  padding: 0;
+  display: block;
+  width: 100%;
+}
+
+ul.locations li {
+  list-style: none;
+  padding: 15px 0 15px 15px;
+  font-size: 3em;
+}
+
+ul.locations li:nth-child(even) {
+  background: #d93;
+}
+
+ul.locations li:nth-child(odd) {
+  background: #2bb;
+}
