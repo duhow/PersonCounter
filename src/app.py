@@ -1,12 +1,13 @@
 from flask import Flask, render_template, abort
 import redis
+import os
 
 app = Flask(__name__)
 
 redis_db = redis.Redis(
-    host='localhost',
-    port=6379,
-    db=0,
+    host=os.getenv('REDIS_HOST', 'localhost'),
+    port=os.getenv('REDIS_PORT', 6379),
+    db=os.getenv('REDIS_DB', 0),
     charset="utf-8",
     decode_responses=True # set as str, not bytes
 )

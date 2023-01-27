@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    image: ghcr.io/duhow/personcounter
+    depends_on:
+    - redis
+    environment:
+      REDIS_HOST: redis
+    ports:
+    - "5000:5000"
+
+  redis:
+    image: eqalpha/keydb:x86_64_v6.3.2
+    volumes:
+    - ./redis:/data
